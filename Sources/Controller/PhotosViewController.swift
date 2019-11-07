@@ -25,16 +25,20 @@ import Photos
 import BSGridCollectionViewLayout
 
 final class PhotosViewController : UICollectionViewController {    
+
     var selectionClosure: ((_ asset: PHAsset) -> Void)?
     var deselectionClosure: ((_ asset: PHAsset) -> Void)?
     var cancelClosure: ((_ assets: [PHAsset]) -> Void)?
     var finishClosure: ((_ assets: [PHAsset]) -> Void)?
     var selectLimitReachedClosure: ((_ selectionLimit: Int) -> Void)?
+	var setLastUsedAlbumIdClosure: ((_ lastUsedAlbumId: String?) -> Void)?
     
     var doneBarButton: UIBarButtonItem?
     var cancelBarButton: UIBarButtonItem?
     var albumTitleView: UIButton?
-    
+	private var currentAlbumId: String?
+
+
     let expandAnimator = ZoomAnimator()
     let shrinkAnimator = ZoomAnimator()
     
@@ -98,13 +102,27 @@ final class PhotosViewController : UICollectionViewController {
         navigationItem.leftBarButtonItem = cancelBarButton
         navigationItem.rightBarButtonItem = doneBarButton
         navigationItem.titleView = albumTitleView
+        
+        // If a selected album was specified, find and use it to start
+        var selectedAlbum: PHAssetCollection? = albumsDataSource.fetchResults.first?.firstObject
+        if let albumId = settings.startingAlbumId {
+            for alb in albumsDataSource.fetchResults {
+                alb.enumerateObjects({ (a, idx, stop) -> Void in
+                    if a.localIdentifier == albumId {
+                        selectedAlbum = a
+                        stop.pointee = true
+                    }
+                })
+            }
+        }
 
-        if let album = albumsDataSource.fetchResults.first?.firstObject {
+        if let album = selectedAlbum {
             initializePhotosDataSource(album)
             updateAlbumTitle(album)
+            self.currentAlbumId = album.localIdentifier
             collectionView?.reloadData()
         }
-        
+
         // Add long press recognizer
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PhotosViewController.collectionViewLongPressed(_:)))
         longPressRecognizer.minimumPressDuration = 0.5
@@ -127,11 +145,13 @@ final class PhotosViewController : UICollectionViewController {
     
     // MARK: Button actions
     @objc func cancelButtonPressed(_ sender: UIBarButtonItem) {
+		setLastUsedAlbumIdClosure?(self.currentAlbumId)
         dismiss(animated: true, completion: nil)
         cancelClosure?(assetStore.assets)
     }
     
     @objc func doneButtonPressed(_ sender: UIBarButtonItem) {
+		setLastUsedAlbumIdClosure?(self.currentAlbumId)
         dismiss(animated: true, completion: nil)
         finishClosure?(assetStore.assets)
     }
@@ -348,6 +368,7 @@ extension PhotosViewController: UITableViewDelegate {
         let album = albumsDataSource.fetchResults[indexPath.section][indexPath.row]
         initializePhotosDataSource(album)
         updateAlbumTitle(album)
+        self.currentAlbumId = album.localIdentifier
         collectionView?.reloadData()
         
         // Dismiss album selection
