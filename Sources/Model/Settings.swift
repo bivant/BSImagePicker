@@ -215,6 +215,21 @@ import Photos
         
         public lazy var manageButtonText: String = "Manage"
         public lazy var manageButtonTextColor: UIColor = .systemBlue
+		
+		public struct AlertStrings {
+			public var title: String
+			public var text: String
+			public var cancelTitle: String
+			public var actionTitles: [String]?
+		}
+		public lazy var deniedAlert = AlertStrings(title: "Allow access to your photos",
+												   text: "This lets you share from your camera roll and enables other features for photos. Go to your settings and tap \"Photos\".",
+												   cancelTitle: "Not Now",
+												   actionTitles: ["Open Settings"])
+		public lazy var restrictedAlert = AlertStrings(title: "",
+													   text: "Select more photos or go to Settings to allow access to all photos.",
+													   cancelTitle: "Cancel",
+													   actionTitles: ["Select more photos", "Allow access to all photos"])
     }
 
     /// Theme settings

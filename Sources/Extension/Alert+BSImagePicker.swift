@@ -25,16 +25,17 @@ import Photos
 
 extension AssetsViewController {
     internal func handleDeniedAccess(){
-        let alert = UIAlertController(title: "Allow access to your photos",
-                                      message: "This lets you share from your camera roll and enables other features for photos. Go to your settings and tap \"Photos\".",
+		let strings = settings.permission.deniedAlert
+		let alert = UIAlertController(title: strings.title,
+                                      message: strings.text,
                                       preferredStyle: .alert)
         
-        let notNowAction = UIAlertAction(title: "Not Now",
+		let notNowAction = UIAlertAction(title: strings.cancelTitle,
                                          style: .cancel,
                                          handler: nil)
         alert.addAction(notNowAction)
         
-        let openSettingsAction = UIAlertAction(title: "Open Settings",
+		let openSettingsAction = UIAlertAction(title: strings.actionTitles?.first,
                                                style: .default) { [unowned self] (_) in
             // Open app privacy settings
             gotoAppPrivacySettings()
@@ -44,11 +45,12 @@ extension AssetsViewController {
     }
     
     internal func handleLimitedAccess(){
-        let actionSheet = UIAlertController(title: "",
-                                            message: "Select more photos or go to Settings to allow access to all photos.",
+		let strings = settings.permission.restrictedAlert
+		let actionSheet = UIAlertController(title: strings.title,
+											message: strings.text,
                                             preferredStyle: .actionSheet)
         
-        let selectPhotosAction = UIAlertAction(title: "Select more photos",
+		let selectPhotosAction = UIAlertAction(title: strings.actionTitles?.first,
                                                style: .default) { [unowned self] (_) in
             // Show limited library picker
             if #available(iOS 14, *) {
@@ -57,14 +59,14 @@ extension AssetsViewController {
         }
         actionSheet.addAction(selectPhotosAction)
         
-        let allowFullAccessAction = UIAlertAction(title: "Allow access to all photos",
+		let allowFullAccessAction = UIAlertAction(title: strings.actionTitles?.last,
                                                   style: .default) { [unowned self] (_) in
             // Open app privacy settings
             self.gotoAppPrivacySettings()
         }
         actionSheet.addAction(allowFullAccessAction)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+		let cancelAction = UIAlertAction(title: strings.cancelTitle, style: .cancel, handler: nil)
         actionSheet.addAction(cancelAction)
         
         present(actionSheet, animated: true, completion: nil)
