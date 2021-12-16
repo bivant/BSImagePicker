@@ -23,7 +23,7 @@
 import UIKit
 import Photos
 
-protocol AssetsViewControllerDelegate: class {
+protocol AssetsViewControllerDelegate: AnyObject {
     func assetsViewController(_ assetsViewController: AssetsViewController, didSelectAsset asset: PHAsset)
     func assetsViewController(_ assetsViewController: AssetsViewController, didDeselectAsset asset: PHAsset)
     func assetsViewController(_ assetsViewController: AssetsViewController, didLongPressCell cell: AssetCollectionViewCell, displayingAsset asset: PHAsset)
@@ -70,7 +70,7 @@ class AssetsViewController: UIViewController {
 		if settings.permission.enabled {
 			checkAuthorizationStatus()
 		} else {
-        PHPhotoLibrary.shared().register(self)
+			PHPhotoLibrary.shared().register(self)
 		}
         
         view = collectionView

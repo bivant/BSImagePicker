@@ -23,7 +23,7 @@
 import UIKit
 import Photos
 
-protocol AutorizationStatusHeaderViewDelegate: class {
+protocol AutorizationStatusHeaderViewDelegate: AnyObject {
     func didTapManageButton(for status: PHAuthorizationStatus)
 }
 
@@ -35,7 +35,7 @@ class AutorizationStatusHeaderView : UICollectionReusableView {
     @UsesAutoLayout
     private var titleLabel: UILabel = {
         let lbl = UILabel()
-        lbl.numberOfLines = 3
+        lbl.numberOfLines = 0
         return lbl
     }()
     
@@ -110,15 +110,12 @@ class AutorizationStatusHeaderView : UICollectionReusableView {
             titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: self.manageButton.leadingAnchor, constant: -8),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: self.manageButton.leadingAnchor, constant: -16),
             
             manageButton.topAnchor.constraint(equalTo: self.topAnchor),
             manageButton.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            manageButton.leadingAnchor.constraint(greaterThanOrEqualTo: self.titleLabel.trailingAnchor, constant: 8),
             manageButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
             manageButton.widthAnchor.constraint(greaterThanOrEqualToConstant: manageButton.runtimeSize().width)
-            
-            
         ])
     }
     

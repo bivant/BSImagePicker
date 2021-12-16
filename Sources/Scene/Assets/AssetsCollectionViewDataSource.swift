@@ -65,8 +65,6 @@ class AssetsCollectionViewDataSource : NSObject, UICollectionViewDataSource, UIC
         return fetchResult.count
     }
     
-    
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let asset = fetchResult[indexPath.row]
         let animationsWasEnabled = UIView.areAnimationsEnabled
