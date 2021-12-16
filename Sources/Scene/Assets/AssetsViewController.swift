@@ -67,7 +67,11 @@ class AssetsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+		if settings.permission.enabled {
+			checkAuthorizationStatus()
+		} else {
         PHPhotoLibrary.shared().register(self)
+		}
         
         view = collectionView
         
@@ -87,11 +91,6 @@ class AssetsViewController: UIViewController {
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(AssetsViewController.collectionViewLongPressed(_:)))
         longPressRecognizer.minimumPressDuration = 0.5
         collectionView.addGestureRecognizer(longPressRecognizer)
-        
-        if settings.permission.enabled {
-            checkAuthorizationStatus()
-        }
-        
         
         syncSelections(store.assets)
     }

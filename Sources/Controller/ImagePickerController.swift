@@ -49,7 +49,7 @@ import Photos
     var onCancel: ((_ assets: [PHAsset]) -> Void)?
     var onFinish: ((_ assets: [PHAsset]) -> Void)?
     public var selectedAlbumIdentifier: String?
-    var onPermissionChange: ((_ status: PHAuthorizationStatus) -> Void)?
+	public var updateSettingsOnAccessGranted: (() -> Void)?
     
     let assetsViewController: AssetsViewController
     let albumsViewController = AlbumsViewController()

@@ -25,25 +25,22 @@ import Photos
 
 
 extension AssetsViewController {
-    
-    internal func checkAuthorizationStatus(){
-        
+    internal func checkAuthorizationStatus() {
         if #available(iOS 14, *) {
-            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [unowned self] (status) in
-                DispatchQueue.main.async {
-                    self.dataSource.setStatus(status)
-                    self.collectionView.reloadData()
-                }
-            }
-        }else{
-            PHPhotoLibrary.requestAuthorization { (status) in
-                DispatchQueue.main.async {
-                    self.dataSource.setStatus(status)
-                    self.collectionView.reloadData()
-                }
-            }
-            
-        }
+			let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+			assert(status != .notDetermined, "status should be set already as requested on controller presentation")
+			dataSource.setStatus(status)
+			collectionView.reloadData()
+			if status == .limited || status == .authorized {
+				PHPhotoLibrary.shared().register(self)
+			}
+		} else {
+			let status = PHPhotoLibrary.authorizationStatus()
+			dataSource.setStatus(status)
+			collectionView.reloadData()
+			if status == .authorized {
+				PHPhotoLibrary.shared().register(self)
+			}
+		}
     }
-    
 }

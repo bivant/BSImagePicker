@@ -38,26 +38,69 @@ import Photos
     ///   - finish: Finish callback
     ///   - completion: Presentation completion callback
     public func presentImagePicker(_ imagePicker: ImagePickerController, animated: Bool = true, select: ((_ asset: PHAsset) -> Void)?, deselect: ((_ asset: PHAsset) -> Void)?, cancel: (([PHAsset]) -> Void)?, finish: (([PHAsset]) -> Void)?, completion: (() -> Void)? = nil) {
-        authorize {
-            // Set closures
-            imagePicker.onSelection = select
-            imagePicker.onDeselection = deselect
-            imagePicker.onCancel = cancel
-            imagePicker.onFinish = finish
-
-            // And since we are using the blocks api. Set ourselfs as delegate
-            imagePicker.imagePickerDelegate = imagePicker
-
-            // Present
-            self.present(imagePicker, animated: animated, completion: completion)
-        }
+		let presentClosure = { (accessLevel: PHAuthorizationStatus) in
+			// Set closures
+			imagePicker.onSelection = select
+			imagePicker.onDeselection = deselect
+			imagePicker.onCancel = cancel
+			imagePicker.onFinish = finish
+			
+			// And since we are using the blocks api. Set ourselfs as delegate
+			imagePicker.imagePickerDelegate = imagePicker
+			var haveAccess: Bool
+			if #available(iOS 14, *) {
+				haveAccess = accessLevel == .authorized || accessLevel == .limited
+			} else {
+				haveAccess = accessLevel == .authorized
+			}
+			if haveAccess  {
+				imagePicker.updateSettingsOnAccessGranted?()
+			}
+			
+			// Present
+			self.present(imagePicker, animated: animated, completion: completion)
+		}
+		if #available(iOS 14, *) {
+			let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+			if imagePicker.settings.permission.enabled && status != .notDetermined {
+				DispatchQueue.main.async {
+					presentClosure(status)
+				}
+				return
+			}
+			switch status {
+			case .authorized:
+				presentClosure(status)
+			case .limited:
+				if imagePicker.settings.permission.enabled {
+					presentClosure(status)
+					return
+				}
+				fallthrough
+			case .notDetermined:
+				PHPhotoLibrary.requestAuthorization(for: .readWrite) { (newStatus) in
+					switch newStatus {
+					case .authorized, .limited:
+						DispatchQueue.main.async { presentClosure(status) }
+					default:
+						break
+					}
+				}
+			default:
+				break
+			}
+		} else {
+			authorize { status in
+				presentClosure(status)
+			}
+		}
     }
 
-    private func authorize(_ authorized: @escaping () -> Void) {
+	private func authorize(_ authorized: @escaping (_: PHAuthorizationStatus) -> Void) {
         PHPhotoLibrary.requestAuthorization { (status) in
             switch status {
             case .authorized:
-                DispatchQueue.main.async(execute: authorized)
+				DispatchQueue.main.async { authorized(status) }
             default:
                 break
             }

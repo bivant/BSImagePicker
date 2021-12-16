@@ -59,11 +59,14 @@ class ViewController: UIViewController {
 
         imagePicker.selectedAlbumIdentifier = lastSelectedAlbum
         //Show the "Recent" album and all other ones available
-        let options = imagePicker.settings.fetch.album.options
-        imagePicker.settings.fetch.album.fetchResults = [
-            PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: options),
-            PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: options),
-        ]
+		imagePicker.updateSettingsOnAccessGranted = { [weak imagePicker] in
+			guard let imagePicker = imagePicker else { return }
+			let options = imagePicker.settings.fetch.album.options
+			imagePicker.settings.fetch.album.fetchResults = [
+				PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: options),
+				PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: options),
+			]
+		}
 
         let start = Date()
         self.presentImagePicker(imagePicker, select: { (asset) in
