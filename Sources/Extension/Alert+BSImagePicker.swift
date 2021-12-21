@@ -24,7 +24,7 @@ import UIKit
 import Photos
 
 extension AssetsViewController {
-    internal func handleDeniedAccess(){
+    internal func handleDeniedAccess(from view: UIView) {
 		let strings = settings.permission.deniedAlert
 		let alert = UIAlertController(title: strings.title,
                                       message: strings.text,
@@ -41,10 +41,11 @@ extension AssetsViewController {
             gotoAppPrivacySettings()
         }
         alert.addAction(openSettingsAction)
+		alert.popoverPresentationController?.sourceView = view
         present(alert, animated: true, completion: nil)
     }
     
-    internal func handleLimitedAccess(){
+    internal func handleLimitedAccess(from view: UIView) {
 		let strings = settings.permission.restrictedAlert
 		let actionSheet = UIAlertController(title: strings.title,
 											message: strings.text,
@@ -69,8 +70,8 @@ extension AssetsViewController {
 		let cancelAction = UIAlertAction(title: strings.cancelTitle, style: .cancel, handler: nil)
         actionSheet.addAction(cancelAction)
         
+		actionSheet.popoverPresentationController?.sourceView = view
         present(actionSheet, animated: true, completion: nil)
-        
     }
     
     internal func gotoAppPrivacySettings() {
