@@ -24,7 +24,7 @@ import UIKit
 import Photos
 
 extension AssetsViewController {
-    internal func handleDeniedAccess(){
+    internal func handleDeniedAccess(from view: UIView) {
         let alert = UIAlertController(title: "Allow access to your photos",
                                       message: "This lets you share from your camera roll and enables other features for photos. Go to your settings and tap \"Photos\".",
                                       preferredStyle: .alert)
@@ -40,10 +40,11 @@ extension AssetsViewController {
             gotoAppPrivacySettings()
         }
         alert.addAction(openSettingsAction)
+		alert.popoverPresentationController?.sourceView = view
         present(alert, animated: true, completion: nil)
     }
     
-    internal func handleLimitedAccess(){
+    internal func handleLimitedAccess(from view: UIView) {
         let actionSheet = UIAlertController(title: "",
                                             message: "Select more photos or go to Settings to allow access to all photos.",
                                             preferredStyle: .actionSheet)
@@ -67,8 +68,9 @@ extension AssetsViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         actionSheet.addAction(cancelAction)
         
+		actionSheet.popoverPresentationController?.sourceView = view
         present(actionSheet, animated: true, completion: nil)
-        
+	
     }
     
     internal func gotoAppPrivacySettings() {

@@ -23,8 +23,8 @@
 import UIKit
 import Photos
 
-protocol AutorizationStatusHeaderViewDelegate: class {
-    func didTapManageButton(for status: PHAuthorizationStatus)
+protocol AutorizationStatusHeaderViewDelegate: AnyObject {
+	func didTapManageButton(for status: PHAuthorizationStatus, sender: UIButton)
 }
 
 class AutorizationStatusHeaderView : UICollectionReusableView {
@@ -128,7 +128,7 @@ class AutorizationStatusHeaderView : UICollectionReusableView {
     
     @objc func didTapManage(){
         guard let status = authorizationStatus else { return }
-        delegate?.didTapManageButton(for: status)
+		delegate?.didTapManageButton(for: status, sender: manageButton)
     }
     
 }

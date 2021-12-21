@@ -282,13 +282,13 @@ extension AssetsViewController: PHPhotoLibraryChangeObserver {
 }
 
 extension AssetsViewController: AutorizationStatusHeaderViewDelegate {
-    func didTapManageButton(for status: PHAuthorizationStatus) {
+	func didTapManageButton(for status: PHAuthorizationStatus, sender: UIButton) {
         switch status {
         case .denied:
-            self.handleDeniedAccess()
+			self.handleDeniedAccess(from: sender)
             break
         case .limited:
-            self.handleLimitedAccess()
+            self.handleLimitedAccess(from: sender)
             break
         default:
             break
