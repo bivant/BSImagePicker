@@ -221,6 +221,15 @@ import Photos
 			public var text: String
 			public var cancelTitle: String
 			public var actionTitles: [String]?
+			public init(title: String, text: String, cancelTitle: String, actionTitles: [String]) {
+				self.title = title
+				self.text = text
+				self.cancelTitle = cancelTitle
+				self.actionTitles = actionTitles
+			}
+			public init(title: String, text: String, cancel: String, actions: [String]) {
+				self.init(title: title, text: text, cancelTitle: cancel, actionTitles: actions)
+			}
 		}
 		public lazy var deniedAlert = AlertStrings(title: "Allow access to your photos",
 												   text: "This lets you share from your camera roll and enables other features for photos. Go to your settings and tap \"Photos\".",
