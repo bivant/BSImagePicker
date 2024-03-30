@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BSImagePicker"
-  s.version          = "3.3.1"
+  s.version          = "3.3.2"
   s.summary          = "BSImagePicker is a multiple image picker for iOS. UIImagePickerController replacement"
   s.description      = <<-DESC
   A multiple image picker.
@@ -13,9 +13,9 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '10.0'
   s.requires_arc = true
-  s.swift_version = '5.1'
+  s.swift_version = '5.7'
 
   s.source_files = 'Sources/**/*.swift'
-
+  s.resource_bundle = { 'BSImagePicker' => ['Sources/Resources/PrivacyInfo.xcprivacy']}
   s.frameworks = 'UIKit', 'Photos'
 end
